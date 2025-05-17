@@ -2,101 +2,114 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My Portfolio</title>
+  <title>Tic-Tac-Toe Game</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 50px;
     }
-    header {
-      background-color: #2c3e50;
-      color: white;
-      padding: 20px 0;
-      text-align: center;
+    h1 {
+      margin-bottom: 20px;
     }
-    nav {
-      background-color: #34495e;
-      padding: 10px;
-      text-align: center;
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 5px;
     }
-    nav a {
-      color: white;
-      margin: 0 15px;
-      text-decoration: none;
-      font-weight: bold;
+    .cell {
+      width: 100px;
+      height: 100px;
+      background-color: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      cursor: pointer;
     }
-    section {
-      padding: 20px;
+    .cell:hover {
+      background-color: #ddd;
     }
-    footer {
-      background-color: #2c3e50;
-      color: white;
-      text-align: center;
-      padding: 10px 0;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
+    .message {
+      margin-top: 20px;
+      font-size: 20px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>Tejaswini Uppala</h1>
-  <p>Web Developer | Student | Innovator</p>
-</header>
+  <h1>Tic-Tac-Toe</h1>
+  <div class="board" id="board"></div>
+  <div class="message" id="message"></div>
+  <button onclick="resetGame()">Restart Game</button>
 
-<nav>
-  <a href="#about">About Me</a>
-  <a href="#education">Education</a>
-  <a href="#skills">Skills</a>
-  <a href="#projects">Projects</a>
-  <a href="#contact">Contact</a>
-</nav>
+  <script>
+    const board = document.getElementById("board");
+    const message = document.getElementById("message");
+    let cells = [];
+    let currentPlayer = "X";
+    let gameActive = true;
 
-<section id="about">
-  <h2>About Me</h2>
-  <p>Hello! I'm Tejaswini, a passionate B.Tech student at RVR & JC College of Engineering. I enjoy building websites and learning new technologies.</p>
-</section>
+    function createBoard() {
+      board.innerHTML = "";
+      cells = [];
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        cell.addEventListener("click", () => cellClicked(i));
+        board.appendChild(cell);
+        cells.push("");
+      }
+    }
 
-<section id="education">
-  <h2>Education</h2>
-  <ul>
-    <li>B.Tech in Engineering, RVR & JC College of Engineering, Guntur (2023 - Present)</li>
-    <li>Intermediate (10+2), Vijaya Junior College, Challapalli (2021 - 2023)</li>
-    <li>SSC, Z.P.H. School, K. Kothapalem (2020 - 2021)</li>
-  </ul>
-</section>
+    function cellClicked(index) {
+      if (!gameActive || cells[index] !== "") return;
 
-<section id="skills">
-  <h2>Skills</h2>
-  <ul>
-    <li>HTML, CSS, JavaScript</li>
-    <li>Python Programming</li>
-    <li>Web Development</li>
-    <li>Design Thinking & Product Innovation</li>
-  </ul>
-</section>
+      const cell = board.children[index];
+      cells[index] = currentPlayer;
+      cell.textContent = currentPlayer;
 
-<section id="projects">
-  <h2>Projects</h2>
-  <ul>
-    <li>Portfolio Website - A personal website to showcase my skills and projects.</li>
-    <li>Weather App - A simple weather forecast application using API.</li>
-  </ul>
-</section>
+      if (checkWinner()) {
+        message.textContent = `Player ${currentPlayer} wins!`;
+        gameActive = false;
+      } else if (cells.every(cell => cell !== "")) {
+        message.textContent = "It's a draw!";
+        gameActive = false;
+      } else {
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        message.textContent = `Player ${currentPlayer}'s turn`;
+      }
+    }
 
-<section id="contact">
-  <h2>Contact</h2>
-  <p>Email: tejaswiniuppala8@gmail.com</p>
-  <p>Phone: 916092XXXX</p>
-</section>
+    function checkWinner() {
+      const winPatterns = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+      ];
+      return winPatterns.some(pattern => {
+        const [a, b, c] = pattern;
+        return cells[a] && cells[a] === cells[b] && cells[a] === cells[c];
+      });
+    }
 
-<footer>
-  <p>&copy; 2025 Tejaswini Uppala</p>
-</footer>
+    function resetGame() {
+      currentPlayer = "X";
+      gameActive = true;
+      message.textContent = "Player X's turn";
+      createBoard();
+    }
+
+    // Initialize game on load
+    resetGame();
+  </script>
 
 </body>
 </html>
